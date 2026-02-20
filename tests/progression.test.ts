@@ -8,7 +8,7 @@ describe("Progression", () => {
     const profile = await save.loadProfile();
 
     expect(profile.unlockedSkinIds).toEqual([0, 1, 2, 3]);
-    expect(SaveManager.skinCosts).toEqual([100, 200, 350, 550, 800, 1100, 1450, 1850, 2200, 2650, 3100]);
+    expect(SaveManager.skinCosts).toEqual([100, 200, 350, 550, 800, 1100, 1450, 1850, 2200, 2650, 3100, 3600]);
   });
 
   test("persists round rewards after each round", async () => {

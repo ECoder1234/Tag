@@ -15,7 +15,8 @@ export const SKINS: readonly SkinDefinition[] = [
   { id: 7, name: "Aqua", color: 0xb4ffda },
   { id: 8, name: "Earth", color: 0x8b6a44 },
   { id: 9, name: "Chef", color: 0xf2f5f8 },
-  { id: 10, name: "Mask", color: 0x2f2f3a }
+  { id: 10, name: "Mask", color: 0x2f2f3a },
+  { id: 11, name: "Chocolate", color: 0x6b3f1f }
 ];
 
 const skinById = new Map<number, SkinDefinition>(SKINS.map((skin) => [skin.id, skin]));
@@ -25,4 +26,3 @@ export const DEFAULT_UNLOCKED_SKIN_IDS: readonly number[] = SKINS.map((skin) => 
 export const getSkinColor = (skinId: number): number | null => {
   return skinById.get(skinId)?.color ?? null;
 };
-

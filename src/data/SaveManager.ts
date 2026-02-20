@@ -78,6 +78,7 @@ export class SaveManager {
     1850,
     2200,
     2650,
-    3100
+    3100,
+    3600
   ];
 }
