@@ -22,6 +22,16 @@ const PLAYER_COLORS: readonly number[] = [0x7df9ff, 0xffc98f, 0x9fff9f, 0xe4b5ff
 const PLAYER_PANEL_COLORS: readonly number[] = [0xc62d5f, 0x6fb430, 0x7d4a86, 0xc2ad33];
 const PLAYER_KEY_LABELS: readonly string[] = ["A D W Q", "LEFT RIGHT UP /", "J L I U", "Y H G T"];
 const PLAYER_IDS: readonly PlayerId[] = [0, 1, 2, 3];
+const SKIN_COLORS: readonly number[] = [
+  0x7df9ff,
+  0xffc98f,
+  0x9fff9f,
+  0xe4b5ff,
+  0xff9ca8,
+  0xffef96,
+  0xa8d0ff,
+  0xb4ffda
+];
 
 type RuntimeVariant = "classic" | "infinity";
 type RuntimeTheme = "classic" | "infinity";
@@ -783,6 +793,24 @@ class GameplayScene extends Scene {
     }
   }
 
+  private resolveHumanColor(snapshot: RoundSnapshot, playerId: PlayerId): number {
+    const fallback = PLAYER_COLORS[playerId] ?? 0x7df9ff;
+    if (!this.runtimeConfig.skinsEnabled) {
+      return fallback;
+    }
+
+    const unlocked = snapshot.profile.unlockedSkinIds;
+    if (unlocked.length === 0) {
+      return fallback;
+    }
+
+    const skinId = unlocked[playerId % unlocked.length];
+    if (skinId === undefined) {
+      return fallback;
+    }
+    return SKIN_COLORS[Math.abs(skinId) % SKIN_COLORS.length] ?? fallback;
+  }
+
   private drawPlayers(snapshot: RoundSnapshot): void {
     this.actorLayer.clear();
     this.drawPickupItems(snapshot);
@@ -805,7 +833,7 @@ class GameplayScene extends Scene {
       const bodyHeight = Math.max(14, Math.round(player.height - stretchY));
       const x = Math.round(player.position.x - bodyWidth / 2);
       const y = Math.round(player.position.y - bodyHeight + bob);
-      const humanColor = PLAYER_COLORS[playerId] ?? 0x7df9ff;
+      const humanColor = this.resolveHumanColor(snapshot, playerId);
       const color =
         playerId === snapshot.itPlayerId
           ? itFlashColor
@@ -958,7 +986,7 @@ class GameplayScene extends Scene {
       const panelColor = PLAYER_PANEL_COLORS[playerId] ?? 0x324862;
       drawPixelPanel(this.uiLayer, x, y, 78, 24, panelColor, 0x111a2a, 0xffffff);
       this.uiLayer.rect(x + 4, y + 6, 18, 12).fill(0x101e35);
-      this.uiLayer.rect(x + 6, y + 8, 14, 8).fill(PLAYER_COLORS[playerId] ?? 0x9fc7ff);
+      this.uiLayer.rect(x + 6, y + 8, 14, 8).fill(this.resolveHumanColor(snapshot, playerId as PlayerId));
       for (let pip = 0; pip < 3; pip += 1) {
         const fill = pip < pips ? 0xffffff : 0x5e6b80;
         this.uiLayer.rect(x + 26 + pip * 8, y + 8, 6, 6).fill(fill);
@@ -1047,6 +1075,9 @@ export class Game {
 
   static async create(parent: HTMLElement): Promise<Game> {
     const runtimeConfig = await loadRuntimeConfig();
+    if (typeof document !== "undefined") {
+      document.title = runtimeConfig.title;
+    }
     const app = new Application();
     await app.init({
       width: VIEW_WIDTH,

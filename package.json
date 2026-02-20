@@ -12,6 +12,7 @@
     "check-static": "tsx scripts/check-static.ts",
     "generate-assets": "tsx scripts/generate-assets.ts",
     "generate-marketing": "tsx scripts/generate-marketing.ts",
+    "sync-variants": "tsx scripts/sync-variants.ts",
     "verify-release": "tsx scripts/verify-release.ts",
     "prepare-production": "tsx scripts/prepare-production.ts"
   },
