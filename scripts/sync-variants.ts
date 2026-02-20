@@ -22,8 +22,8 @@ const CLASSIC_CONFIG: RuntimeConfig = {
   variant: "classic",
   theme: "classic",
   title: "Multiplayer Quick Tag",
-  powerupsEnabled: false,
-  skinsEnabled: false
+  powerupsEnabled: true,
+  skinsEnabled: true
 };
 
 const writeJson = async (path: string, value: unknown): Promise<void> => {

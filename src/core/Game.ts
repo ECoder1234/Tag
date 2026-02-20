@@ -808,7 +808,9 @@ class GameplayScene extends Scene {
     if (skinId === undefined) {
       return fallback;
     }
-    return SKIN_COLORS[Math.abs(skinId) % SKIN_COLORS.length] ?? fallback;
+    const roundOffset = Math.max(0, snapshot.roundIndex - 1);
+    const rotatingSkinId = unlocked[(playerId + roundOffset) % unlocked.length] ?? skinId;
+    return SKIN_COLORS[Math.abs(rotatingSkinId) % SKIN_COLORS.length] ?? fallback;
   }
 
   private drawPlayers(snapshot: RoundSnapshot): void {
