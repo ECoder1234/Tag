@@ -1,5 +1,6 @@
 import { Application, Container, Graphics, Text } from "pixi.js";
 import { SaveManager } from "../data/SaveManager";
+import { getSkinColor } from "../config/skins";
 import { RoundSnapshot, RoundManager } from "../game/RoundManager";
 import { PlayerId, PlayerInputState, PowerupType } from "../game/types";
 import { MapManager } from "../game/map/MapManager";
@@ -22,17 +23,6 @@ const PLAYER_COLORS: readonly number[] = [0x7df9ff, 0xffc98f, 0x9fff9f, 0xe4b5ff
 const PLAYER_PANEL_COLORS: readonly number[] = [0xc62d5f, 0x6fb430, 0x7d4a86, 0xc2ad33];
 const PLAYER_KEY_LABELS: readonly string[] = ["A D W Q", "LEFT RIGHT UP /", "J L I U", "Y H G T"];
 const PLAYER_IDS: readonly PlayerId[] = [0, 1, 2, 3];
-const SKIN_COLORS: readonly number[] = [
-  0x7df9ff,
-  0xffc98f,
-  0x9fff9f,
-  0xe4b5ff,
-  0xff9ca8,
-  0xffef96,
-  0xa8d0ff,
-  0xb4ffda
-];
-
 type RuntimeVariant = "classic" | "infinity";
 type RuntimeTheme = "classic" | "infinity";
 
@@ -810,7 +800,7 @@ class GameplayScene extends Scene {
     }
     const roundOffset = Math.max(0, snapshot.roundIndex - 1);
     const rotatingSkinId = unlocked[(playerId + roundOffset) % unlocked.length] ?? skinId;
-    return SKIN_COLORS[Math.abs(rotatingSkinId) % SKIN_COLORS.length] ?? fallback;
+    return getSkinColor(Math.abs(rotatingSkinId)) ?? fallback;
   }
 
   private drawPlayers(snapshot: RoundSnapshot): void {

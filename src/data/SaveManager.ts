@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { CrazyGamesManager } from "../sdk/CrazyGamesManager";
+import { SKINS } from "../config/skins";
 
 const PROFILE_KEY = "tag_infinity_profile_v1";
 
@@ -35,7 +36,9 @@ export class SaveManager {
       const parsed = profileSchema.parse(JSON.parse(raw));
       return {
         tagCoins: parsed.tagCoins,
-        unlockedSkinIds: [...new Set(parsed.unlockedSkinIds)].sort((a, b) => a - b)
+        unlockedSkinIds: [...new Set(parsed.unlockedSkinIds.filter((skinId) => SKINS.some((skin) => skin.id === skinId)))].sort(
+          (a, b) => a - b
+        )
       };
     } catch {
       return defaultProfile();
@@ -64,5 +67,17 @@ export class SaveManager {
     return next;
   }
 
-  static readonly skinCosts: readonly number[] = [100, 200, 350, 550, 800, 1100, 1450, 1850];
+  static readonly skinCosts: readonly number[] = [
+    100,
+    200,
+    350,
+    550,
+    800,
+    1100,
+    1450,
+    1850,
+    2200,
+    2650,
+    3100
+  ];
 }
