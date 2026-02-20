@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-02-19T00:44:04.324Z",
+  "atlases": [
+    "players",
+    "tiles",
+    "powerups"
+  ],
+  "maps": [
+    "neon-rooftops",
+    "sewer-scramble",
+    "arcade-foundry"
+  ]
+}
