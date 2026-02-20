@@ -71,6 +71,18 @@ describe("PowerupSystem", () => {
     powerups.tryUsePowerup(0, players, 1);
     expect(players[0].position.x).toBe(startX + 64);
 
+    players[0].activePowerup = "BounceBurst";
+    players[0].powerupCooldown = 0;
+    players[0].velocity.y = -50;
+    powerups.tryUsePowerup(0, players, 1);
+    expect(players[0].velocity.y).toBeLessThanOrEqual(-760);
+
+    const warpBeforeX = players[0].position.x;
+    players[0].activePowerup = "WarpGate";
+    players[0].powerupCooldown = 0;
+    powerups.tryUsePowerup(0, players, 1, map);
+    expect(players[0].position.x).not.toBe(warpBeforeX);
+
     players[1].position.x = 200;
     players[2].position.x = 400;
     players[1].activePowerup = "SwapZap";

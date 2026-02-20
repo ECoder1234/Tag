@@ -265,7 +265,8 @@ export class RoundManager {
         const nextIt = this.powerups.tryUsePowerup(
           playerId,
           this.players,
-          this.systems.tag.getItPlayerId()
+          this.systems.tag.getItPlayerId(),
+          this.currentMap
         );
         if (nextIt !== this.systems.tag.getItPlayerId()) {
           reassigned = this.systems.tag.forceAssignIt(nextIt) || reassigned;

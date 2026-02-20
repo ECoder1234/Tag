@@ -104,6 +104,10 @@ const getPowerupColor = (type: PowerupType): number => {
       return 0xff7d7d;
     case "BlinkStep":
       return 0x88d7ff;
+    case "BounceBurst":
+      return 0x7de3ff;
+    case "WarpGate":
+      return 0xc28fff;
     case "IceMine":
       return 0xa7f7ff;
     case "TagShield":

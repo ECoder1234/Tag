@@ -16,6 +16,8 @@ export interface PlayerInputState {
 export type PowerupType =
   | "HyperDash"
   | "BlinkStep"
+  | "BounceBurst"
+  | "WarpGate"
   | "IceMine"
   | "TagShield"
   | "PhaseCloak"
@@ -30,6 +32,8 @@ export type PowerupType =
 export const POWERUP_TYPES: readonly PowerupType[] = [
   "HyperDash",
   "BlinkStep",
+  "BounceBurst",
+  "WarpGate",
   "IceMine",
   "TagShield",
   "PhaseCloak",

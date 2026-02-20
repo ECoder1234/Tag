@@ -17,6 +17,8 @@ export class PowerupSystem {
   private static readonly USE_COOLDOWN_MS: Record<PowerupType, number> = {
     HyperDash: 550,
     BlinkStep: 450,
+    BounceBurst: 420,
+    WarpGate: 900,
     IceMine: 700,
     TagShield: 500,
     PhaseCloak: 550,
@@ -27,6 +29,22 @@ export class PowerupSystem {
     DecoyClone: 650,
     RocketHop: 450,
     EMPBurst: 800
+  };
+  private static readonly SPAWN_WEIGHTS: Record<PowerupType, number> = {
+    HyperDash: 2.2,
+    BlinkStep: 2.6,
+    BounceBurst: 3.2,
+    WarpGate: 3.2,
+    IceMine: 0.8,
+    TagShield: 1.5,
+    PhaseCloak: 1.0,
+    ScoreSurge: 0.9,
+    LowGrav: 2.1,
+    SwapZap: 1.1,
+    TimeCrush: 0.8,
+    DecoyClone: 0.7,
+    RocketHop: 2.4,
+    EMPBurst: 0.7
   };
   private static readonly EFFECT_DURATIONS_MS: Record<
     "HyperDash" | "TagShield" | "PhaseCloak" | "ScoreSurge" | "LowGrav" | "TimeCrush",
@@ -73,8 +91,21 @@ export class PowerupSystem {
     if (candidates.length === 0) {
       return this.randomPowerup();
     }
-    const index = Math.floor(this.random() * candidates.length);
-    return candidates[index] ?? candidates[0] ?? this.randomPowerup();
+    let totalWeight = 0;
+    for (const type of candidates) {
+      totalWeight += PowerupSystem.SPAWN_WEIGHTS[type];
+    }
+    if (totalWeight <= 0) {
+      return candidates[0] ?? this.randomPowerup();
+    }
+    let roll = this.random() * totalWeight;
+    for (const type of candidates) {
+      roll -= PowerupSystem.SPAWN_WEIGHTS[type];
+      if (roll <= 0) {
+        return type;
+      }
+    }
+    return candidates[candidates.length - 1] ?? this.randomPowerup();
   }
 
   private spawnPickup(map: MapData): void {
@@ -276,7 +307,8 @@ export class PowerupSystem {
   tryUsePowerup(
     playerId: PlayerId,
     players: Record<PlayerId, PlayerEntity>,
-    currentIt: PlayerId
+    currentIt: PlayerId,
+    map?: MapData
   ): PlayerId {
     const player = players[playerId];
     const powerup = player.activePowerup;
@@ -299,6 +331,25 @@ export class PowerupSystem {
         player.position.x += player.facing * 64;
         player.position.x = Math.max(8, Math.min(632, player.position.x));
         break;
+      case "BounceBurst":
+        player.velocity.y = Math.min(player.velocity.y, -760);
+        player.velocity.x += player.facing * 85;
+        break;
+      case "WarpGate": {
+        if (map !== undefined && map.spawnTiles.length > 0) {
+          const spawnIndex = Math.floor(this.random() * map.spawnTiles.length);
+          const tile = map.spawnTiles[spawnIndex] ?? map.spawnTiles[0];
+          if (tile !== undefined) {
+            player.position.x = tile.x * map.tileSize + map.tileSize / 2;
+            player.position.y = tile.y * map.tileSize - 8;
+            player.velocity.x = 0;
+            player.velocity.y = 0;
+          }
+        } else {
+          player.position.x = Math.max(8, Math.min(632, player.position.x + player.facing * 120));
+        }
+        break;
+      }
       case "IceMine":
         this.mines.push({
           ownerId: playerId,
