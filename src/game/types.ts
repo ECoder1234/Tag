@@ -72,6 +72,7 @@ export interface ActivePowerupPickup {
   id: number;
   type: PowerupType;
   position: Vector2;
+  ttlMs: number;
 }
 
 export interface Mine {

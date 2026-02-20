@@ -13,6 +13,21 @@ import {
 const PLAYER_IDS: readonly PlayerId[] = [0, 1, 2, 3];
 
 export class PowerupSystem {
+  private static readonly PICKUP_TTL_MS = 30000;
+  private static readonly USE_COOLDOWN_MS: Record<PowerupType, number> = {
+    HyperDash: 550,
+    BlinkStep: 450,
+    IceMine: 700,
+    TagShield: 500,
+    PhaseCloak: 550,
+    ScoreSurge: 500,
+    LowGrav: 500,
+    SwapZap: 850,
+    TimeCrush: 700,
+    DecoyClone: 650,
+    RocketHop: 450,
+    EMPBurst: 800
+  };
   private static readonly EFFECT_DURATIONS_MS: Record<
     "HyperDash" | "TagShield" | "PhaseCloak" | "ScoreSurge" | "LowGrav" | "TimeCrush",
     number
@@ -52,6 +67,16 @@ export class PowerupSystem {
     return selected;
   }
 
+  private pickSpawnPowerupType(): PowerupType {
+    const activeTypes = new Set<PowerupType>(this.pickups.map((pickup) => pickup.type));
+    const candidates = POWERUP_TYPES.filter((type) => !activeTypes.has(type));
+    if (candidates.length === 0) {
+      return this.randomPowerup();
+    }
+    const index = Math.floor(this.random() * candidates.length);
+    return candidates[index] ?? candidates[0] ?? this.randomPowerup();
+  }
+
   private spawnPickup(map: MapData): void {
     if (this.pickups.length >= 3) {
       return;
@@ -65,11 +90,12 @@ export class PowerupSystem {
     }
     this.pickups.push({
       id: this.pickupId,
-      type: this.randomPowerup(),
+      type: this.pickSpawnPowerupType(),
       position: {
         x: tile.x * map.tileSize + map.tileSize / 2,
         y: tile.y * map.tileSize - 8
-      }
+      },
+      ttlMs: PowerupSystem.PICKUP_TTL_MS
     });
     this.pickupId += 1;
   }
@@ -202,7 +228,22 @@ export class PowerupSystem {
     }
   }
 
+  private updatePickupLifetimes(deltaMs: number): void {
+    for (let index = this.pickups.length - 1; index >= 0; index -= 1) {
+      const pickup = this.pickups[index];
+      if (pickup === undefined) {
+        continue;
+      }
+      pickup.ttlMs -= deltaMs;
+      if (pickup.ttlMs <= 0) {
+        this.pickups.splice(index, 1);
+      }
+    }
+  }
+
   update(deltaMs: number, players: Record<PlayerId, PlayerEntity>, map: MapData): void {
+    this.updatePickupLifetimes(deltaMs);
+
     this.spawnTimerMs += deltaMs;
     while (this.spawnTimerMs >= 8000) {
       this.spawnTimerMs -= 8000;
@@ -244,7 +285,7 @@ export class PowerupSystem {
     }
 
     player.activePowerup = null;
-    player.powerupCooldown = 500;
+    player.powerupCooldown = PowerupSystem.USE_COOLDOWN_MS[powerup];
 
     switch (powerup) {
       case "HyperDash":
@@ -256,6 +297,7 @@ export class PowerupSystem {
         break;
       case "BlinkStep":
         player.position.x += player.facing * 64;
+        player.position.x = Math.max(8, Math.min(632, player.position.x));
         break;
       case "IceMine":
         this.mines.push({
