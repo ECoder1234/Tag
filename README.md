@@ -3,7 +3,7 @@
 Shared codebase for two game variants:
 
 - `infinity`: Tag Infinity (powerups + skins enabled)
-- `classic`: Multiplayer Quick Tag style (same core gameplay, different visuals, no powerups/skins)
+- `classic`: Multiplayer Quick Tag style (same core gameplay, different visuals)
 
 ## Development
 
@@ -44,3 +44,19 @@ Runtime config files:
 ## Deploy (GitHub Pages)
 
 Pushing to `main` triggers Pages deploy via `.github/workflows/deploy-pages.yml`.
+
+## Pre-Publish
+
+Run this before announcing a release:
+
+```bash
+npm run prepare-production
+npm run sync-variants
+```
+
+Then verify:
+
+1. `dist/index.html` exists and loads.
+2. `dist/runtime-config.json` has the expected title/theme.
+3. `fetch ga,e/multiplayer-quick-tag-files` opens locally on port 8080.
+4. GitHub Actions Pages workflow for `main` is green.
