@@ -3,6 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Tag Infinity is a fast pixel tag game with movement powerups, skins, and local multiplayer chaos." />
+    <meta name="theme-color" content="#05070d" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Tag Infinity" />
+    <meta
+      property="og:description"
+      content="Fast local multiplayer tag with movement powerups, skins, and quick rounds."
+    />
+    <meta property="og:image" content="/marketing/cover.svg" />
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="Tag Infinity" />
+    <meta
+      property="twitter:description"
+      content="Fast local multiplayer tag with movement powerups, skins, and quick rounds."
+    />
+    <meta property="twitter:image" content="/marketing/cover.svg" />
     <title>Tag Infinity</title>
     <style>
       html, body {
@@ -18,9 +34,14 @@
         image-rendering: pixelated;
       }
     </style>
-    <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+    <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js" defer></script>
   </head>
   <body>
+    <noscript>
+      <div style="padding:16px;color:#eaf2ff;font-family:Courier New, monospace;background:#05070d;">
+        JavaScript is required to play Tag Infinity.
+      </div>
+    </noscript>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

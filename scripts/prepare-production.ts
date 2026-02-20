@@ -11,10 +11,16 @@ const steps = [
 ] as const;
 
 for (const [cmd, args] of steps) {
-  const result = spawnSync(cmd, args, {
-    stdio: "inherit",
-    shell: process.platform === "win32"
-  });
+  const npmExecPath = process.env.npm_execpath;
+  const result =
+    cmd === "npm" && typeof npmExecPath === "string" && npmExecPath.length > 0
+      ? spawnSync(process.execPath, [npmExecPath, ...args], {
+          stdio: "inherit"
+        })
+      : spawnSync(cmd, args, {
+          stdio: "inherit",
+          shell: process.platform === "win32"
+        });
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
   }

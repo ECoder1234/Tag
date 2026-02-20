@@ -3,3 +3,4 @@ dist/
 coverage/
 .tmp_ref_frames/
 .env
+public/generated/pixel/
